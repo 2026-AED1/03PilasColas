@@ -4,7 +4,7 @@
 
 Igual que en las clases anteriores: cada bloque introduce una idea y termina en un ejercicio con código ejecutable. Lee primero el planteamiento, intenta anticipar el resultado —sobre todo el **coste**— y solo después despliega el código y ejecútalo para comparar tu razonamiento con lo que mide la máquina.
 
-La clase 2 iba sobre **elegir una representación**: dos formas de guardar una secuencia, y el perfil de costes que sale de cada una. Esta clase va sobre algo distinto y, en la práctica, más importante: **elegir qué operaciones NO ofrecer**.
+El tema 2 iba sobre **elegir una representación**: dos formas de guardar una secuencia, y el perfil de costes que sale de cada una. Esta clase va sobre algo distinto y, en la práctica, más importante: **elegir qué operaciones NO ofrecer**.
 
 En este bloque vemos tres TADs: **Pila**, **Cola** y **Deque**. No son estructuras nuevas. Son la Lista del tema anterior **con operaciones quitadas**. Y esa mutilación deliberada es exactamente lo que los hace valiosos:
 
@@ -12,9 +12,9 @@ En este bloque vemos tres TADs: **Pila**, **Cola** y **Deque**. No son estructur
 - El código que los usa se vuelve mucho más fácil de razonar, porque hay muchas menos cosas que pueden pasar.
 - El compilador pasa a defender el contrato: lo que el TAD prohíbe deja de poder escribirse.
 
-Queda un cuarto TAD, la **Cola de Prioridad**, que se estudia más adelante junto con los árboles (el carpeta `4_con_arboles`), porque su implementación —el montículo binario— es un tipo de árbol. Las aplicaciones prácticas de la Pila y de la Cola (equilibrado de paréntesis, evaluación de expresiones, BFS/DFS…) están en la carpeta `3_practicas`.
+Queda un TAD relacionado con las colas, la **Cola de Prioridad**, que se estudia más adelante junto con los árboles, porque su implementación —el montículo binario— es un tipo de árbol. 
 
-Algunos de los ficheros de aquí tienen partes marcadas con `// TODO: implementar`: son el ejercicio. Complétalas tú; las soluciones están en la carpeta `2_profesor` por si te atascas o quieres comparar.
+Algunos de los ficheros de aquí tienen partes marcadas con `// TODO: implementar`: son el ejercicio. Complétalas tú.
 
 Para compilar y ejecutar cualquier fichero:
 
@@ -54,7 +54,6 @@ Los TADs de hoy dan la vuelta al planteamiento. En vez de preguntarse «¿qué s
 | **Cola**              | Se entra por un extremo y se sale por el otro     | O(1)                        |
 | **Deque**             | Se entra y se sale por los dos extremos           | O(1)                        |
 
-(Falta la Cola de Prioridad, cuyo orden de salida lo decide el valor y no el orden de llegada, y por eso necesita O(log n). La vemos con los árboles.)
 
 Fíjate en que los tres TADs de esta carpeta no dicen nada sobre acceder al elemento de en medio. No es que sea caro: **es que no existe**. Esa es la diferencia entre una operación lenta y una operación ausente.
 
@@ -167,7 +166,6 @@ Dicho de otro modo: **siempre que algo anida**. Paréntesis dentro de paréntesi
 
 El ejemplo que no se suele contar es el más importante: **la pila de llamadas de tu programa es, literalmente, una pila**. Cada llamada apila un registro de activación con los parámetros, las variables locales y la dirección de retorno; cada `return` lo desapila. Cuando una recursión infinita provoca un *stack overflow*, lo que ha pasado es que un TAD Pila se ha quedado sin memoria. Y de ahí sale un corolario práctico: **toda recursión se puede convertir en un bucle con una pila explícita**, porque es lo que el procesador estaba haciendo por ti.
 
-Las tres aplicaciones clásicas de esta idea —equilibrado de delimitadores, evaluación en notación postfija y el algoritmo *shunting-yard* de Dijkstra— se trabajan en la carpeta `3_practicas` (fichero `01_pila_aplicaciones.cpp`).
 
 ---
 
@@ -252,7 +250,6 @@ bool invarianteCorrecto() const {
 
 </details>
 
-**Si te atascas:** la solución completa está en `2_profesor/02_cola_enlazada_resuelta.cpp`.
 
 **La pregunta que debes poder responder tras el ejercicio:** ¿qué pasaría si al desencolar el último elemento no anularas `ultimo_`? Sería **algo peor** que un error. `ultimo_->siguiente = nuevo` escribiría cuatro u ocho bytes en un bloque de memoria que ya se ha liberado. Es comportamiento indefinido: lo más probable es que no pase nada visible en ese momento, que el programa siga funcionando, y que reviente mucho más tarde en un sitio sin ninguna relación aparente. Un `if` de una línea es lo que separa un programa correcto de uno que falla los martes.
 
@@ -330,7 +327,6 @@ int posicionLibre() const  { return (frente_ + n_) % capacidad_; }
 
 </details>
 
-**Si te atascas:** la solución completa está en `2_profesor/03_cola_circular_resuelta.cpp`.
 
 **La respuesta a la pregunta de arriba:** **no** se puede copiar tal cual. En memoria, el contenido es `[5 6 3 4]`: una copia literal dejaría la cola en el orden equivocado. Hay que recorrer **lógicamente** (`datos_[(frente_ + k) % capacidad_]` para k de 0 a n−1) y escribir desde la posición 0 del array nuevo. Y entonces `frente_` **debe volver a 0**, porque el círculo se ha desenrollado. Olvidar esa línea es el error clásico de esta estructura: la cola sigue funcionando un rato y luego devuelve los elementos en un orden imposible.
 
@@ -431,7 +427,6 @@ bool borrarUltimo() {                            // O(1)
 
 Ese es justo el motivo por el que `std::stack` usa `deque` y no `vector` por defecto, aunque `vector` suela ser más rápido: la STL elige por defecto **lo predecible**, no lo más rápido en promedio.
 
-Si quieres ver *cómo* está hecho ese vector de bloques por dentro, ese es exactamente el material de `2_profesor/11_deque_bloques.cpp`.
 
 ---
 
@@ -500,7 +495,6 @@ Fíjate por último en la tabla de defectos de este bloque, porque cada uno resp
 | Cola  | `std::queue` | `std::deque`          | O(1) por los dos extremos, que es justo lo que pide. |
 | Deque | `std::deque` | *(es una estructura)*  | Bloques + tabla de punteros.                          |
 
-Falta una fila, la de la Cola de Prioridad y `std::priority_queue`: la veremos junto con los árboles.
 
 ---
 
@@ -526,8 +520,6 @@ La fila que casi nadie mira y casi siempre importa es la del **peor caso de una 
 3. **¿Solo toco un extremo?** → Pila (`std::stack`).
 4. **¿Necesito además acceder por posición, o recorrer?** → Entonces no era ninguno de estos: vuelve a la clase 2 y usa `std::vector`.
 5. **¿Tengo un límite duro de latencia?** → Evita las implementaciones con pico O(n): usa buffers circulares de capacidad fija y reserva la memoria por adelantado.
-
-(Falta la primera pregunta de la lista completa —«¿el orden de salida lo decide el valor?»—, que lleva a la Cola de Prioridad. Se añade en `4_con_arboles`.)
 
 ---
 
